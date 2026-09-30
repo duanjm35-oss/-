@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Irregular Verbs Master - 98不規則動詞精通神器</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        
+        /* Perspective and 3D card flips */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Custom animations */
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-subtle { animation: pulse-subtle 2s infinite ease-in-out; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Header -->
+    <header class="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-amber-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+                        98 English Irregular Verbs
+                        <span class="text-xs bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">標準單一詞型版</span>
+                    </h1>
+                    <p class="text-xs text-indigo-100 font-medium">單一過去式/分詞 + 精準IPA音標 + 高清晰女聲語音發音</p>
+                </div>
+            </div>
+
+            <!-- Voice Synthesizer & SFX Controls -->
+            <div class="flex items-center flex-wrap gap-2 text-xs">
+                <div class="bg-black/20 backdrop-blur-md rounded-xl p-1.5 flex items-center gap-2 border border-white/10">
+                    <i class="fa-solid fa-headset text-indigo-200 ml-1"></i>
+                    <select id="voiceSelect" class="bg-slate-800 text-white text-xs rounded-lg px-2 py-1 outline-none border border-slate-700 max-w-[140px] sm:max-w-[180px] truncate" title="語音引擎選擇">
+                        <option value="">自動載入女性語音...</option>
+                    </select>
+                    
+                    <button id="btnTestVoice" class="bg-indigo-500 hover:bg-indigo-400 text-white font-medium px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1 shadow-sm" title="測試當前語音">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span class="hidden sm:inline">測試發音</span>
+                    </button>
+                    
+                    <button id="btnToggleSfx" class="bg-white/10 hover:bg-white/20 text-white font-medium px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1" title="切換音效">
+                        <i id="sfxIcon" class="fa-solid fa-music text-emerald-300"></i>
+                        <span class="hidden sm:inline">音效開</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-slate-900/40 backdrop-blur-md border-t border-white/10 px-4 sm:px-6">
+            <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-4 overflow-x-auto py-2 no-scrollbar">
+                <button onclick="switchTab('matching')" id="tab-matching" class="nav-tab active flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition duration-200 whitespace-nowrap bg-white text-indigo-700 shadow-md">
+                    <i class="fa-solid fa-diagram-project"></i> 三欄配對挑戰
+                </button>
+                <button onclick="switchTab('memory')" id="tab-memory" class="nav-tab flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition duration-200 whitespace-nowrap text-indigo-100 hover:bg-white/10">
+                    <i class="fa-solid fa-clone"></i> 三張一組翻牌
+                </button>
+                <button onclick="switchTab('flashcards')" id="tab-flashcards" class="nav-tab flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition duration-200 whitespace-nowrap text-indigo-100 hover:bg-white/10">
+                    <i class="fa-solid fa-layer-group"></i> 閃卡特訓
+                </button>
+                <button onclick="switchTab('reference')" id="tab-reference" class="nav-tab flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition duration-200 whitespace-nowrap text-indigo-100 hover:bg-white/10">
+                    <i class="fa-solid fa-table-list"></i> 全98詞總表
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
+
+        <!-- ================= MODE 1: TRIPLE COLUMN MATCHING ================= -->
+        <section id="view-matching" class="mode-view flex-1 flex flex-col space-y-4">
+            <!-- Game Controls & Info -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-slate-700">範圍:</span>
+                    <select id="matchSheetSelect" onchange="initMatchingGame()" class="bg-slate-100 font-semibold text-slate-700 text-sm rounded-xl px-3 py-1.5 border border-slate-300 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="1">Sheet 1 (動詞 1 - 32)</option>
+                        <option value="2">Sheet 2 (動詞 33 - 66)</option>
+                        <option value="3">Sheet 3 (動詞 67 - 98)</option>
+                        <option value="all">全 98 個動詞 (隨機抽樣 10 組)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-bold uppercase">得分 Score</span>
+                        <span id="matchScore" class="text-xl font-extrabold text-indigo-600">0</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-bold uppercase">連擊 Combo</span>
+                        <span id="matchCombo" class="text-xl font-extrabold text-amber-500">0x</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-bold uppercase">計時 Timer</span>
+                        <span id="matchTimer" class="text-xl font-mono font-bold text-slate-700">00:00</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="getMatchHint()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> 提示
+                    </button>
+                    <button onclick="initMatchingGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-rotate-right"></i> 重新開始
+                    </button>
+                </div>
+            </div>
+
+            <!-- Matching Board Grid -->
+            <div class="relative flex-1 bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden min-h-[480px]">
+                <!-- SVG Canvas overlay for connecting lines -->
+                <svg id="svgOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-10"></svg>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 relative z-20 h-full">
+                    <!-- Column 1: Base Form -->
+                    <div class="flex flex-col space-y-2">
+                        <div class="bg-slate-100 text-slate-700 font-extrabold text-xs tracking-wider uppercase py-2 px-3 rounded-xl border border-slate-200 text-center flex justify-between items-center">
+                            <span>1. 原形 (Base Form)</span>
+                            <span class="text-indigo-600 font-mono" id="col1-count">0/10</span>
+                        </div>
+                        <div id="col-base" class="flex-1 space-y-2 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- Column 2: Past Simple -->
+                    <div class="flex flex-col space-y-2">
+                        <div class="bg-slate-100 text-slate-700 font-extrabold text-xs tracking-wider uppercase py-2 px-3 rounded-xl border border-slate-200 text-center flex justify-between items-center">
+                            <span>2. 過去式 (Past Simple)</span>
+                            <span class="text-purple-600 font-mono" id="col2-count">0/10</span>
+                        </div>
+                        <div id="col-past" class="flex-1 space-y-2 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- Column 3: Past Participle -->
+                    <div class="flex flex-col space-y-2">
+                        <div class="bg-slate-100 text-slate-700 font-extrabold text-xs tracking-wider uppercase py-2 px-3 rounded-xl border border-slate-200 text-center flex justify-between items-center">
+                            <span>3. 過去分詞 (Past Participle)</span>
+                            <span class="text-pink-600 font-mono" id="col3-count">0/10</span>
+                        </div>
+                        <div id="col-pp" class="flex-1 space-y-2 overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODE 2: TRIPLET MEMORY CARDS ================= -->
+        <section id="view-memory" class="mode-view flex-1 hidden flex flex-col space-y-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-slate-700">選擇範圍:</span>
+                    <select id="memorySheetSelect" onchange="initMemoryGame()" class="bg-slate-100 font-semibold text-slate-700 text-sm rounded-xl px-3 py-1.5 border border-slate-300 outline-none">
+                        <option value="1">Sheet 1 (隨機 6 組 = 18 卡)</option>
+                        <option value="2">Sheet 2 (隨機 6 組 = 18 卡)</option>
+                        <option value="3">Sheet 3 (隨機 6 組 = 18 卡)</option>
+                        <option value="all">全 98 詞 (隨機 6 組)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-bold uppercase">已配對 Triplets</span>
+                        <span id="memMatches" class="text-xl font-extrabold text-emerald-600">0 / 6</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-bold uppercase">翻牌次數 Flips</span>
+                        <span id="memFlips" class="text-xl font-extrabold text-indigo-600">0</span>
+                    </div>
+                </div>
+
+                <button onclick="initMemoryGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i> 重置卡牌
+                </button>
+            </div>
+
+            <!-- Memory Cards Grid -->
+            <div id="memoryGrid" class="flex-1 grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 p-2 bg-slate-100 rounded-2xl border border-slate-200">
+                <!-- Memory card items injected by JS -->
+            </div>
+        </section>
+
+        <!-- ================= MODE 3: FLASHCARDS ================= -->
+        <section id="view-flashcards" class="mode-view flex-1 hidden flex flex-col items-center justify-center space-y-6 max-w-2xl mx-auto w-full my-auto">
+            
+            <div class="w-full flex justify-between items-center bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-indigo-500"></i>
+                    <select id="flashSheetSelect" onchange="initFlashcards()" class="bg-transparent font-bold text-slate-700 text-sm outline-none">
+                        <option value="all">全 98 個不規則動詞</option>
+                        <option value="1">Sheet 1 (動詞 1 - 32)</option>
+                        <option value="2">Sheet 2 (動詞 33 - 66)</option>
+                        <option value="3">Sheet 3 (動詞 67 - 98)</option>
+                    </select>
+                </div>
+
+                <div class="text-xs font-bold text-slate-500">
+                    進度: <span id="flashIndex" class="text-indigo-600 text-sm font-extrabold">1</span> / <span id="flashTotal">98</span>
+                </div>
+            </div>
+
+            <!-- 3D Card -->
+            <div id="flashCardContainer" onclick="flipFlashCard()" class="w-full h-80 perspective-1000 cursor-pointer group">
+                <div id="flashCardInner" class="relative w-full h-full duration-500 transform-style-3d shadow-xl rounded-3xl border border-slate-200 bg-white">
+                    
+                    <!-- Card Front (Base Form) -->
+                    <div class="absolute inset-0 w-full h-full backface-hidden rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-br from-white via-slate-50 to-indigo-50/30">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-extrabold rounded-full tracking-wider uppercase">1. 原形 Base Form</span>
+                            <button onclick="event.stopPropagation(); speakFlashCurrent('base')" class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-volume-high text-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-center my-auto space-y-2">
+                            <h2 id="flashBase" class="text-5xl font-black text-slate-800 tracking-tight">be</h2>
+                            <p id="flashBaseIpa" class="text-xl font-mono text-indigo-600 tracking-wide font-medium">/biː/</p>
+                            <p id="flashMeaning" class="text-lg font-bold text-slate-500 pt-2">是</p>
+                        </div>
+
+                        <div class="text-center text-xs font-semibold text-slate-400 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-hand-pointer text-indigo-400"></i> 點擊卡片翻面查看過去式與過去分詞
+                        </div>
+                    </div>
+
+                    <!-- Card Back (Past & PP) -->
+                    <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 flex flex-col justify-between bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs font-bold text-indigo-300 uppercase tracking-widest">變化形式 Forms</span>
+                            <span class="text-xs text-slate-400">點擊圖標可單獨發音</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 my-auto">
+                            <!-- Past Simple -->
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center space-y-1 hover:bg-white/15 transition">
+                                <span class="text-[10px] font-extrabold text-amber-300 uppercase tracking-wider">過去式 Past Simple</span>
+                                <span id="flashPast" class="text-2xl font-black text-white">was</span>
+                                <span id="flashPastIpa" class="text-xs font-mono text-indigo-200">/wɒz/</span>
+                                <button onclick="event.stopPropagation(); speakFlashCurrent('past')" class="mt-2 w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-slate-900 transition flex items-center justify-center">
+                                    <i class="fa-solid fa-volume-high text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Past Participle -->
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center space-y-1 hover:bg-white/15 transition">
+                                <span class="text-[10px] font-extrabold text-pink-300 uppercase tracking-wider">過去分詞 Past Participle</span>
+                                <span id="flashPP" class="text-2xl font-black text-white">been</span>
+                                <span id="flashPPIpa" class="text-xs font-mono text-indigo-200">/biːn/</span>
+                                <button onclick="event.stopPropagation(); speakFlashCurrent('pp')" class="mt-2 w-8 h-8 rounded-full bg-pink-400/20 text-pink-300 hover:bg-pink-400 hover:text-slate-900 transition flex items-center justify-center">
+                                    <i class="fa-solid fa-volume-high text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-xs font-semibold text-indigo-300/70">
+                            再次點擊返回正面
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-between gap-4 w-full">
+                <button onclick="prevFlashCard()" class="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-2xl shadow-sm border border-slate-200 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> 上一個
+                </button>
+                
+                <button onclick="shuffleFlashCards()" class="p-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-2xl border border-indigo-100 transition active:scale-95" title="隨機洗牌">
+                    <i class="fa-solid fa-shuffle text-lg"></i>
+                </button>
+
+                <button onclick="nextFlashCard()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-2">
+                    下一個 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= MODE 4: COMPREHENSIVE REFERENCE TABLE ================= -->
+        <section id="view-reference" class="mode-view flex-1 hidden flex flex-col space-y-4">
+            
+            <!-- Filter & Search Toolbar -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                
+                <!-- Sheet Tabs -->
+                <div class="flex items-center bg-slate-100 p-1 rounded-xl gap-1">
+                    <button onclick="filterTableSheet('all')" id="tblSheet-all" class="tbl-sheet-btn active px-3 py-1.5 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm">
+                        全部 1-98
+                    </button>
+                    <button onclick="filterTableSheet('1')" id="tblSheet-1" class="tbl-sheet-btn px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+                        Sheet 1 (1-32)
+                    </button>
+                    <button onclick="filterTableSheet('2')" id="tblSheet-2" class="tbl-sheet-btn px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+                        Sheet 2 (33-66)
+                    </button>
+                    <button onclick="filterTableSheet('3')" id="tblSheet-3" class="tbl-sheet-btn px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+                        Sheet 3 (67-98)
+                    </button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative flex-1 max-w-xs min-w-[200px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="tableSearch" oninput="renderTable()" placeholder="搜尋英文動詞或中文解釋..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+                </div>
+
+                <div class="text-xs text-slate-500 font-bold">
+                    顯示 <span id="tableMatchCount" class="text-indigo-600">98</span> 個動詞
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="flex-1 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+                <div class="overflow-x-auto overflow-y-auto flex-1 max-h-[600px]">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-100 text-slate-600 font-extrabold text-xs uppercase tracking-wider sticky top-0 z-10 border-b border-slate-200 shadow-sm">
+                            <tr>
+                                <th class="p-3.5 text-center w-12">#</th>
+                                <th class="p-3.5">原形 (Base Form) & IPA</th>
+                                <th class="p-3.5">過去式 (Past Simple) & IPA</th>
+                                <th class="p-3.5">過去分詞 (Past Participle) & IPA</th>
+                                <th class="p-3.5">中文釋義 (Meaning)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-100 text-sm font-medium">
+                            <!-- Table rows dynamically populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-pulse-subtle">
+            <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i class="fa-solid fa-trophy text-4xl"></i>
+            </div>
+            
+            <div>
+                <h3 class="text-2xl font-black text-slate-800">挑戰成功！Congratulations!</h3>
+                <p id="victorySubtitle" class="text-sm text-slate-500 font-medium mt-1">您已順利完成本單元的動詞配對！</p>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 grid grid-cols-2 gap-3">
+                <div>
+                    <span class="text-xs text-slate-400 font-bold block uppercase">最終得分</span>
+                    <span id="victoryScore" class="text-2xl font-black text-indigo-600">0</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 font-bold block uppercase">消耗時間</span>
+                    <span id="victoryTime" class="text-2xl font-black text-emerald-600">00:00</span>
+                </div>
+            </div>
+
+            <button onclick="closeVictoryModal()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold rounded-2xl shadow-lg transition active:scale-95">
+                繼續挑戰 / 再玩一次
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Cleaned & Standardized 98 English Irregular Verbs
+        // Rule applied: ONLY the 1st past and 1st past-participle variant is retained.
+        // Single clean IPA matching exact form kept.
+        const VERBS = [
+            // SHEET 1 (1 - 32)
+            { id: 1, sheet: 1, base: "be", baseIpa: "/biː/", past: "was", pastIpa: "/wɒz/", pp: "been", ppIpa: "/biːn/", meaning: "是" },
+            { id: 2, sheet: 1, base: "bear", baseIpa: "/beə(r)/", past: "bore", pastIpa: "/bɔː(r)/", pp: "born", ppIpa: "/bɔːn/", meaning: "承受 / 出生" },
+            { id: 3, sheet: 1, base: "beat", baseIpa: "/biːt/", past: "beat", pastIpa: "/biːt/", pp: "beaten", ppIpa: "/ˈbiːtn/", meaning: "打 / 擊敗" },
+            { id: 4, sheet: 1, base: "become", baseIpa: "/bɪˈkʌm/", past: "became", pastIpa: "/bɪˈkeɪm/", pp: "become", ppIpa: "/bɪˈkʌm/", meaning: "成為" },
+            { id: 5, sheet: 1, base: "begin", baseIpa: "/bɪˈɡɪn/", past: "began", pastIpa: "/bɪˈɡæn/", pp: "begun", ppIpa: "/bɪˈɡʌn/", meaning: "開始" },
+            { id: 6, sheet: 1, base: "bend", baseIpa: "/bend/", past: "bent", pastIpa: "/bent/", pp: "bent", ppIpa: "/bent/", meaning: "彎曲" },
+            { id: 7, sheet: 1, base: "bet", baseIpa: "/bet/", past: "bet", pastIpa: "/bet/", pp: "bet", ppIpa: "/bet/", meaning: "打賭 / 投注" },
+            { id: 8, sheet: 1, base: "bite", baseIpa: "/baɪt/", past: "bit", pastIpa: "/bɪt/", pp: "bitten", ppIpa: "/ˈbɪtn/", meaning: "咬" },
+            { id: 9, sheet: 1, base: "blow", baseIpa: "/bləʊ/", past: "blew", pastIpa: "/bluː/", pp: "blown", ppIpa: "/bləʊn/", meaning: "吹" },
+            { id: 10, sheet: 1, base: "break", baseIpa: "/breɪk/", past: "broke", pastIpa: "/brəʊk/", pp: "broken", ppIpa: "/ˈbrəʊkən/", meaning: "打破 / 打碎" },
+            { id: 11, sheet: 1, base: "bring", baseIpa: "/brɪŋ/", past: "brought", pastIpa: "/brɔːt/", pp: "brought", ppIpa: "/brɔːt/", meaning: "帶來" },
+            { id: 12, sheet: 1, base: "broadcast", baseIpa: "/ˈbrɔːdkɑːst/", past: "broadcast", pastIpa: "/ˈbrɔːdkɑːst/", pp: "broadcast", ppIpa: "/ˈbrɔːdkɑːst/", meaning: "廣播 / 播放" },
+            { id: 13, sheet: 1, base: "build", baseIpa: "/bɪld/", past: "built", pastIpa: "/bɪlt/", pp: "built", ppIpa: "/bɪlt/", meaning: "建造 / 建築" },
+            { id: 14, sheet: 1, base: "burn", baseIpa: "/bɜːn/", past: "burnt", pastIpa: "/bɜːnt/", pp: "burnt", ppIpa: "/bɜːnt/", meaning: "燃燒 / 燒毀" },
+            { id: 15, sheet: 1, base: "buy", baseIpa: "/baɪ/", past: "bought", pastIpa: "/bɔːt/", pp: "bought", ppIpa: "/bɔːt/", meaning: "購買" },
+            { id: 16, sheet: 1, base: "catch", baseIpa: "/kætʃ/", past: "caught", pastIpa: "/kɔːt/", pp: "caught", ppIpa: "/kɔːt/", meaning: "抓住 / 趕上" },
+            { id: 17, sheet: 1, base: "choose", baseIpa: "/tʃuːz/", past: "chose", pastIpa: "/tʃəʊz/", pp: "chosen", ppIpa: "/ˈtʃəʊzn/", meaning: "選擇" },
+            { id: 18, sheet: 1, base: "come", baseIpa: "/kʌm/", past: "came", pastIpa: "/keɪm/", pp: "come", ppIpa: "/kʌm/", meaning: "來" },
+            { id: 19, sheet: 1, base: "cost", baseIpa: "/kɒst/", past: "cost", pastIpa: "/kɒst/", pp: "cost", ppIpa: "/kɒst/", meaning: "花費 / 價值" },
+            { id: 20, sheet: 1, base: "cut", baseIpa: "/kʌt/", past: "cut", pastIpa: "/kʌt/", pp: "cut", ppIpa: "/kʌt/", meaning: "切 / 剪" },
+            { id: 21, sheet: 1, base: "dig", baseIpa: "/dɪɡ/", past: "dug", pastIpa: "/dʌɡ/", pp: "dug", ppIpa: "/dʌɡ/", meaning: "挖掘" },
+            { id: 22, sheet: 1, base: "do", baseIpa: "/duː/", past: "did", pastIpa: "/dɪd/", pp: "done", ppIpa: "/dʌn/", meaning: "做" },
+            { id: 23, sheet: 1, base: "draw", baseIpa: "/drɔː/", past: "drew", pastIpa: "/druː/", pp: "drawn", ppIpa: "/drɔːn/", meaning: "繪畫 / 拉" },
+            { id: 24, sheet: 1, base: "dream", baseIpa: "/driːm/", past: "dreamed", pastIpa: "/driːmd/", pp: "dreamed", ppIpa: "/driːmd/", meaning: "做夢 / 夢想" },
+            { id: 25, sheet: 1, base: "drink", baseIpa: "/drɪŋk/", past: "drank", pastIpa: "/dræŋk/", pp: "drunk", ppIpa: "/drʌŋk/", meaning: "喝 / 飲用" },
+            { id: 26, sheet: 1, base: "drive", baseIpa: "/draɪv/", past: "drove", pastIpa: "/drəʊv/", pp: "driven", ppIpa: "/ˈdrɪvn/", meaning: "駕駛 / 驅動" },
+            { id: 27, sheet: 1, base: "eat", baseIpa: "/iːt/", past: "ate", pastIpa: "/eɪt/", pp: "eaten", ppIpa: "/ˈiːtn/", meaning: "吃" },
+            { id: 28, sheet: 1, base: "fall", baseIpa: "/fɔːl/", past: "fell", pastIpa: "/fel/", pp: "fallen", ppIpa: "/ˈfɔːlən/", meaning: "落下 / 跌倒" },
+            { id: 29, sheet: 1, base: "feed", baseIpa: "/fiːd/", past: "fed", pastIpa: "/fed/", pp: "fed", ppIpa: "/fed/", meaning: "餵養" },
+            { id: 30, sheet: 1, base: "feel", baseIpa: "/fiːl/", past: "felt", pastIpa: "/felt/", pp: "felt", ppIpa: "/felt/", meaning: "感覺" },
+            { id: 31, sheet: 1, base: "fight", baseIpa: "/faɪt/", past: "fought", pastIpa: "/fɔːt/", pp: "fought", ppIpa: "/fɔːt/", meaning: "戰鬥 / 打架" },
+            { id: 32, sheet: 1, base: "find", baseIpa: "/faɪnd/", past: "found", pastIpa: "/faʊnd/", pp: "found", ppIpa: "/faʊnd/", meaning: "尋找 / 發現" },
+
+            // SHEET 2 (33 - 66)
+            { id: 33, sheet: 2, base: "fly", baseIpa: "/flaɪ/", past: "flew", pastIpa: "/fluː/", pp: "flown", ppIpa: "/fləʊn/", meaning: "飛 / 飛行" },
+            { id: 34, sheet: 2, base: "forbid", baseIpa: "/fəˈbɪd/", past: "forbade", pastIpa: "/fəˈbæd/", pp: "forbidden", ppIpa: "/fəˈbɪdn/", meaning: "禁止" },
+            { id: 35, sheet: 2, base: "forget", baseIpa: "/fəˈɡet/", past: "forgot", pastIpa: "/fəˈɡɒt/", pp: "forgotten", ppIpa: "/fəˈɡɒtn/", meaning: "忘記" },
+            { id: 36, sheet: 2, base: "forgive", baseIpa: "/fəˈɡɪv/", past: "forgave", pastIpa: "/fəˈɡeɪv/", pp: "forgiven", ppIpa: "/fəˈɡɪvn/", meaning: "原諒 / 寬恕" },
+            { id: 37, sheet: 2, base: "freeze", baseIpa: "/friːz/", past: "froze", pastIpa: "/frəʊz/", pp: "frozen", ppIpa: "/ˈfrəʊzn/", meaning: "凍結 / 結冰" },
+            { id: 38, sheet: 2, base: "get", baseIpa: "/ɡet/", past: "got", pastIpa: "/ɡɒt/", pp: "got", ppIpa: "/ɡɒt/", meaning: "得到 / 變得" },
+            { id: 39, sheet: 2, base: "give", baseIpa: "/ɡɪv/", past: "gave", pastIpa: "/ɡeɪv/", pp: "given", ppIpa: "/ˈɡɪvn/", meaning: "給予" },
+            { id: 40, sheet: 2, base: "go", baseIpa: "/ɡəʊ/", past: "went", pastIpa: "/went/", pp: "gone", ppIpa: "/ɡɒn/", meaning: "去 / 前往" },
+            { id: 41, sheet: 2, base: "grow", baseIpa: "/ɡrəʊ/", past: "grew", pastIpa: "/ɡruː/", pp: "grown", ppIpa: "/ɡrəʊn/", meaning: "生長 / 種植" },
+            { id: 42, sheet: 2, base: "hang", baseIpa: "/hæŋ/", past: "hung", pastIpa: "/hʌŋ/", pp: "hung", ppIpa: "/hʌŋ/", meaning: "懸掛 / 吊掛" },
+            { id: 43, sheet: 2, base: "have", baseIpa: "/hæv/", past: "had", pastIpa: "/hæd/", pp: "had", ppIpa: "/hæd/", meaning: "有 / 擁有" },
+            { id: 44, sheet: 2, base: "hear", baseIpa: "/hɪə(r)/", past: "heard", pastIpa: "/hɜːd/", pp: "heard", ppIpa: "/hɜːd/", meaning: "聽到 / 聽見" },
+            { id: 45, sheet: 2, base: "hide", baseIpa: "/haɪd/", past: "hid", pastIpa: "/hɪd/", pp: "hidden", ppIpa: "/ˈhɪdn/", meaning: "躲藏 / 隱藏" },
+            { id: 46, sheet: 2, base: "hit", baseIpa: "/hɪt/", past: "hit", pastIpa: "/hɪt/", pp: "hit", ppIpa: "/hɪt/", meaning: "打擊 / 擊中" },
+            { id: 47, sheet: 2, base: "hold", baseIpa: "/həʊld/", past: "held", pastIpa: "/held/", pp: "held", ppIpa: "/held/", meaning: "握住 / 舉辦" },
+            { id: 48, sheet: 2, base: "hurt", baseIpa: "/hɜːt/", past: "hurt", pastIpa: "/hɜːt/", pp: "hurt", ppIpa: "/hɜːt/", meaning: "傷害 / 疼痛" },
+            { id: 49, sheet: 2, base: "keep", baseIpa: "/kiːp/", past: "kept", pastIpa: "/kept/", pp: "kept", ppIpa: "/kept/", meaning: "保持 / 保留" },
+            { id: 50, sheet: 2, base: "know", baseIpa: "/nəʊ/", past: "knew", pastIpa: "/njuː/", pp: "known", ppIpa: "/nəʊn/", meaning: "知道 / 認識" },
+            { id: 51, sheet: 2, base: "lay", baseIpa: "/leɪ/", past: "laid", pastIpa: "/leɪd/", pp: "laid", ppIpa: "/leɪd/", meaning: "放置 / 產卵" },
+            { id: 52, sheet: 2, base: "lead", baseIpa: "/liːd/", past: "led", pastIpa: "/led/", pp: "led", ppIpa: "/led/", meaning: "領導 / 引導" },
+            { id: 53, sheet: 2, base: "learn", baseIpa: "/lɜːn/", past: "learned", pastIpa: "/lɜːnd/", pp: "learned", ppIpa: "/lɜːnd/", meaning: "學習" },
+            { id: 54, sheet: 2, base: "leave", baseIpa: "/liːv/", past: "left", pastIpa: "/left/", pp: "left", ppIpa: "/left/", meaning: "離開 / 留下" },
+            { id: 55, sheet: 2, base: "lend", baseIpa: "/lend/", past: "lent", pastIpa: "/lent/", pp: "lent", ppIpa: "/lent/", meaning: "借出" },
+            { id: 56, sheet: 2, base: "let", baseIpa: "/let/", past: "let", pastIpa: "/let/", pp: "let", ppIpa: "/let/", meaning: "讓 / 出租" },
+            { id: 57, sheet: 2, base: "lie", baseIpa: "/laɪ/", past: "lay", pastIpa: "/leɪ/", pp: "lain", ppIpa: "/leɪn/", meaning: "躺 / 平放" },
+            { id: 58, sheet: 2, base: "light", baseIpa: "/laɪt/", past: "lit", pastIpa: "/lɪt/", pp: "lit", ppIpa: "/lɪt/", meaning: "點燃 / 照亮" },
+            { id: 59, sheet: 2, base: "lose", baseIpa: "/luːz/", past: "lost", pastIpa: "/lɒst/", pp: "lost", ppIpa: "/lɒst/", meaning: "失去 / 輸掉" },
+            { id: 60, sheet: 2, base: "make", baseIpa: "/meɪk/", past: "made", pastIpa: "/meɪd/", pp: "made", ppIpa: "/meɪd/", meaning: "製造 / 使得" },
+            { id: 61, sheet: 2, base: "mean", baseIpa: "/miːn/", past: "meant", pastIpa: "/ment/", pp: "meant", ppIpa: "/ment/", meaning: "意思是 / 意圖" },
+            { id: 62, sheet: 2, base: "meet", baseIpa: "/miːt/", past: "met", pastIpa: "/met/", pp: "met", ppIpa: "/met/", meaning: "遇見 / 會面" },
+            { id: 63, sheet: 2, base: "pay", baseIpa: "/peɪ/", past: "paid", pastIpa: "/peɪd/", pp: "paid", ppIpa: "/peɪd/", meaning: "支付 / 付錢" },
+            { id: 64, sheet: 2, base: "put", baseIpa: "/pʊt/", past: "put", pastIpa: "/pʊt/", pp: "put", ppIpa: "/pʊt/", meaning: "放置 / 安放" },
+            { id: 65, sheet: 2, base: "read", baseIpa: "/riːd/", past: "read", pastIpa: "/red/", pp: "read", ppIpa: "/red/", meaning: "閱讀" },
+            { id: 66, sheet: 2, base: "ride", baseIpa: "/raɪd/", past: "rode", pastIpa: "/rəʊd/", pp: "ridden", ppIpa: "/ˈrɪdn/", meaning: "騎 / 乘" },
+
+            // SHEET 3 (67 - 98)
+            { id: 67, sheet: 3, base: "ring", baseIpa: "/rɪŋ/", past: "rang", pastIpa: "/ræŋ/", pp: "rung", ppIpa: "/rʌŋ/", meaning: "響 / 按鈴" },
+            { id: 68, sheet: 3, base: "rise", baseIpa: "/raɪz/", past: "rose", pastIpa: "/rəʊz/", pp: "risen", ppIpa: "/ˈrɪzn/", meaning: "上升 / 升起" },
+            { id: 69, sheet: 3, base: "run", baseIpa: "/rʌn/", past: "ran", pastIpa: "/ræn/", pp: "run", ppIpa: "/rʌn/", meaning: "跑步 / 經營" },
+            { id: 70, sheet: 3, base: "say", baseIpa: "/seɪ/", past: "said", pastIpa: "/sed/", pp: "said", ppIpa: "/sed/", meaning: "說 / 講" },
+            { id: 71, sheet: 3, base: "see", baseIpa: "/siː/", past: "saw", pastIpa: "/sɔː/", pp: "seen", ppIpa: "/siːn/", meaning: "看見 / 看" },
+            { id: 72, sheet: 3, base: "sell", baseIpa: "/sel/", past: "sold", pastIpa: "/səʊld/", pp: "sold", ppIpa: "/səʊld/", meaning: "售賣 / 出售" },
+            { id: 73, sheet: 3, base: "send", baseIpa: "/send/", past: "sent", pastIpa: "/sent/", pp: "sent", ppIpa: "/sent/", meaning: "發送 / 郵寄" },
+            { id: 74, sheet: 3, base: "set", baseIpa: "/set/", past: "set", pastIpa: "/set/", pp: "set", ppIpa: "/set/", meaning: "設置 / 放置" },
+            { id: 75, sheet: 3, base: "shake", baseIpa: "/ʃeɪk/", past: "shook", pastIpa: "/ʃʊk/", pp: "shaken", ppIpa: "/ˈʃeɪkən/", meaning: "搖動 / 握手" },
+            { id: 76, sheet: 3, base: "shine", baseIpa: "/ʃaɪn/", past: "shone", pastIpa: "/ʃɒn/", pp: "shone", ppIpa: "/ʃɒn/", meaning: "發光 / 照耀" },
+            { id: 77, sheet: 3, base: "shoot", baseIpa: "/ʃuːt/", past: "shot", pastIpa: "/ʃɒt/", pp: "shot", ppIpa: "/ʃɒt/", meaning: "射擊 / 拍攝" },
+            { id: 78, sheet: 3, base: "show", baseIpa: "/ʃəʊ/", past: "showed", pastIpa: "/ʃəʊd/", pp: "shown", ppIpa: "/ʃəʊn/", meaning: "展示 / 顯示" },
+            { id: 79, sheet: 3, base: "shut", baseIpa: "/ʃʌt/", past: "shut", pastIpa: "/ʃʌt/", pp: "shut", ppIpa: "/ʃʌt/", meaning: "關閉" },
+            { id: 80, sheet: 3, base: "sing", baseIpa: "/sɪŋ/", past: "sang", pastIpa: "/sæŋ/", pp: "sung", ppIpa: "/sʌŋ/", meaning: "唱歌" },
+            { id: 81, sheet: 3, base: "sink", baseIpa: "/sɪŋk/", past: "sank", pastIpa: "/sæŋk/", pp: "sunk", ppIpa: "/sʌŋk/", meaning: "下沉 / 沉沒" },
+            { id: 82, sheet: 3, base: "sit", baseIpa: "/sɪt/", past: "sat", pastIpa: "/sæt/", pp: "sat", ppIpa: "/sæt/", meaning: "坐" },
+            { id: 83, sheet: 3, base: "sleep", baseIpa: "/sliːp/", past: "slept", pastIpa: "/slept/", pp: "slept", ppIpa: "/slept/", meaning: "睡覺" },
+            { id: 84, sheet: 3, base: "slide", baseIpa: "/slaɪd/", past: "slid", pastIpa: "/slɪd/", pp: "slid", ppIpa: "/slɪd/", meaning: "滑動 / 滑落" },
+            { id: 85, sheet: 3, base: "smell", baseIpa: "/smel/", past: "smelled", pastIpa: "/smeld/", pp: "smelled", ppIpa: "/smeld/", meaning: "聞 / 發出氣味" },
+            { id: 86, sheet: 3, base: "speak", baseIpa: "/spiːk/", past: "spoke", pastIpa: "/spəʊk/", pp: "spoken", ppIpa: "/ˈspəʊkən/", meaning: "講話 / 說" },
+            { id: 87, sheet: 3, base: "speed", baseIpa: "/spiːd/", past: "sped", pastIpa: "/sped/", pp: "sped", ppIpa: "/sped/", meaning: "加速 / 疾馳" },
+            { id: 88, sheet: 3, base: "spell", baseIpa: "/spel/", past: "spelled", pastIpa: "/speld/", pp: "spelled", ppIpa: "/speld/", meaning: "拼寫" },
+            { id: 89, sheet: 3, base: "spend", baseIpa: "/spend/", past: "spent", pastIpa: "/spent/", pp: "spent", ppIpa: "/spent/", meaning: "花費 (時間/錢)" },
+            { id: 90, sheet: 3, base: "stand", baseIpa: "/stænd/", past: "stood", pastIpa: "/stʊd/", pp: "stood", ppIpa: "/stʊd/", meaning: "站立 / 忍受" },
+            { id: 91, sheet: 3, base: "steal", baseIpa: "/stiːl/", past: "stole", pastIpa: "/stəʊl/", pp: "stolen", ppIpa: "/ˈstəʊlən/", meaning: "偷竊" },
+            { id: 92, sheet: 3, base: "swim", baseIpa: "/swɪm/", past: "swam", pastIpa: "/swæm/", pp: "swum", ppIpa: "/swʌm/", meaning: "游泳" },
+            { id: 93, sheet: 3, base: "take", baseIpa: "/teɪk/", past: "took", pastIpa: "/tʊk/", pp: "taken", ppIpa: "/ˈteɪkən/", meaning: "拿走 / 花費" },
+            { id: 94, sheet: 3, base: "teach", baseIpa: "/tiːtʃ/", past: "taught", pastIpa: "/tɔːt/", pp: "taught", ppIpa: "/tɔːt/", meaning: "教導 / 教授" },
+            { id: 95, sheet: 3, base: "tell", baseIpa: "/tel/", past: "told", pastIpa: "/təʊld/", pp: "told", ppIpa: "/təʊld/", meaning: "告訴 / 講述" },
+            { id: 96, sheet: 3, base: "think", baseIpa: "/θɪŋk/", past: "thought", pastIpa: "/θɔːt/", pp: "thought", ppIpa: "/θɔːt/", meaning: "思考 / 認為" },
+            { id: 97, sheet: 3, base: "throw", baseIpa: "/θrəʊ/", past: "threw", pastIpa: "/θruː/", pp: "thrown", ppIpa: "/θrəʊn/", meaning: "扔 / 投擲" },
+            { id: 98, sheet: 3, base: "write", baseIpa: "/raɪt/", past: "wrote", pastIpa: "/rəʊt/", pp: "written", ppIpa: "/ˈrɪtn/", meaning: "書寫 / 寫作" }
+        ];
+
+        // Audio & Speech Controller
+        let sfxEnabled = true;
+        let selectedVoice = null;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Web Audio Synthesizer for SFX
+        function playSfx(type) {
+            if (!sfxEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'match') {
+                    // Success chime
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, now + idx * 0.06);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.2);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.06);
+                        osc.stop(now + idx * 0.06 + 0.2);
+                    });
+                } else if (type === 'error') {
+                    // Mismatch buzz
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(140, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'flip') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'win') {
+                    [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.1);
+                        osc.stop(now + idx * 0.1 + 0.4);
+                    });
+                }
+            } catch(e) {}
+        }
+
+        // Web Speech API TTS Setup with Female Voice Priority
+        function initVoices() {
+            if (!('speechSynthesis' in window)) return;
+            
+            function populate() {
+                const voices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+                const select = document.getElementById('voiceSelect');
+                select.innerHTML = '';
+
+                if (voices.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.text = "預設系統語音";
+                    select.appendChild(opt);
+                    return;
+                }
+
+                // Female voice keywords check
+                const femaleKeywords = ['samantha', 'zira', 'jenny', 'victoria', 'karen', 'fiona', 'moira', 'google us english', 'female', 'natural'];
+                let bestMatch = null;
+
+                voices.forEach((v, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.text = `${v.name} (${v.lang})`;
+                    select.appendChild(opt);
+
+                    const lowerName = v.name.toLowerCase();
+                    if (!bestMatch) {
+                        if (femaleKeywords.some(kw => lowerName.includes(kw))) {
+                            bestMatch = v;
+                            select.value = idx;
+                        }
+                    }
+                });
+
+                if (!bestMatch && voices.length > 0) {
+                    selectedVoice = voices[0];
+                } else {
+                    selectedVoice = bestMatch;
+                }
+
+                select.onchange = () => {
+                    selectedVoice = voices[select.value];
+                };
+            }
+
+            populate();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populate;
+            }
+        }
+
+        function speakWord(text) {
+            if (!('speechSynthesis' in window) || !text) return;
+            window.speechSynthesis.cancel(); // Stop current
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;  // Slightly measured pace for high clarity
+            utterance.pitch = 1.15; // Pleasant female pitch tuning
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            playSfx('click');
+            document.querySelectorAll('.mode-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('bg-white', 'text-indigo-700', 'shadow-md');
+                el.classList.add('text-indigo-100', 'hover:bg-white/10');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            activeTabBtn.classList.add('bg-white', 'text-indigo-700', 'shadow-md');
+            activeTabBtn.classList.remove('text-indigo-100', 'hover:bg-white/10');
+
+            if (tabId === 'matching') {
+                initMatchingGame();
+            } else if (tabId === 'memory') {
+                initMemoryGame();
+            } else if (tabId === 'flashcards') {
+                initFlashcards();
+            } else if (tabId === 'reference') {
+                renderTable();
+            }
+        }
+
+        // ================= MODE 1: TRIPLE COLUMN MATCHING LOGIC =================
+        let matchState = {
+            verbs: [],
+            selected: { base: null, past: null, pp: null },
+            matchedIds: new Set(),
+            score: 0,
+            combo: 0,
+            timer: 0,
+            timerInterval: null
+        };
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initMatchingGame() {
+            clearInterval(matchState.timerInterval);
+            const sheetVal = document.getElementById('matchSheetSelect').value;
+            
+            let filtered = [];
+            if (sheetVal === 'all') {
+                filtered = shuffleArray(VERBS).slice(0, 10);
+            } else {
+                const sNum = parseInt(sheetVal);
+                filtered = VERBS.filter(v => v.sheet === sNum);
+                if (filtered.length > 10) {
+                    filtered = shuffleArray(filtered).slice(0, 10);
+                }
+            }
+
+            matchState.verbs = filtered;
+            matchState.selected = { base: null, past: null, pp: null };
+            matchState.matchedIds = new Set();
+            matchState.score = 0;
+            matchState.combo = 0;
+            matchState.timer = 0;
+
+            document.getElementById('matchScore').innerText = '0';
+            document.getElementById('matchCombo').innerText = '0x';
+            document.getElementById('matchTimer').innerText = '00:00';
+
+            matchState.timerInterval = setInterval(() => {
+                matchState.timer++;
+                const mins = Math.floor(matchState.timer / 60).toString().padStart(2, '0');
+                const secs = (matchState.timer % 60).toString().padStart(2, '0');
+                document.getElementById('matchTimer').innerText = `${mins}:${secs}`;
+            }, 1000);
+
+            renderMatchingColumns();
+            clearSvgLines();
+        }
+
+        function renderMatchingColumns() {
+            const colBase = document.getElementById('col-base');
+            const colPast = document.getElementById('col-past');
+            const colPp = document.getElementById('col-pp');
+
+            colBase.innerHTML = '';
+            colPast.innerHTML = '';
+            colPp.innerHTML = '';
+
+            const baseList = shuffleArray(matchState.verbs);
+            const pastList = shuffleArray(matchState.verbs);
+            const ppList = shuffleArray(matchState.verbs);
+
+            const totalCount = matchState.verbs.length;
+            const matchedCount = matchState.matchedIds.size;
+            document.getElementById('col1-count').innerText = `${matchedCount}/${totalCount}`;
+            document.getElementById('col2-count').innerText = `${matchedCount}/${totalCount}`;
+            document.getElementById('col3-count').innerText = `${matchedCount}/${totalCount}`;
+
+            baseList.forEach(v => {
+                colBase.appendChild(createMatchCard(v, 'base', v.base, v.baseIpa));
+            });
+            pastList.forEach(v => {
+                colPast.appendChild(createMatchCard(v, 'past', v.past, v.pastIpa));
+            });
+            ppList.forEach(v => {
+                colPp.appendChild(createMatchCard(v, 'pp', v.pp, v.ppIpa));
+            });
+        }
+
+        function createMatchCard(verb, type, text, ipa) {
+            const isMatched = matchState.matchedIds.has(verb.id);
+            const isSelected = matchState.selected[type] && matchState.selected[type].verb.id === verb.id;
+
+            const card = document.createElement('div');
+            card.id = `match-card-${type}-${verb.id}`;
+            card.className = `p-3 rounded-xl border transition-all duration-200 cursor-pointer flex justify-between items-center ${
+                isMatched 
+                ? 'bg-emerald-50 border-emerald-200 opacity-40 pointer-events-none' 
+                : isSelected 
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg scale-102 ring-2 ring-indigo-400' 
+                : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-sm'
+            }`;
+
+            card.onclick = () => handleMatchSelect(verb, type, text);
+
+            card.innerHTML = `
+                <div>
+                    <span class="font-extrabold text-sm ${isSelected ? 'text-white' : 'text-slate-800'}">${text}</span>
+                    <span class="text-xs font-mono ml-1.5 ${isSelected ? 'text-indigo-200' : 'text-slate-400'}">${ipa}</span>
+                </div>
+                <button onclick="event.stopPropagation(); speakWord('${text}')" class="w-7 h-7 rounded-lg ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'} transition flex items-center justify-center">
+                    <i class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+            `;
+
+            return card;
+        }
+
+        function handleMatchSelect(verb, type, text) {
+            playSfx('click');
+            speakWord(text);
+
+            if (matchState.selected[type] && matchState.selected[type].verb.id === verb.id) {
+                matchState.selected[type] = null;
+            } else {
+                matchState.selected[type] = { verb, type };
+            }
+
+            renderMatchingColumns();
+            drawMatchConnections();
+
+            // Check if all 3 columns have a selected item
+            if (matchState.selected.base && matchState.selected.past && matchState.selected.pp) {
+                const bId = matchState.selected.base.verb.id;
+                const pId = matchState.selected.past.verb.id;
+                const ppId = matchState.selected.pp.verb.id;
+
+                if (bId === pId && pId === ppId) {
+                    // Match Success!
+                    playSfx('match');
+                    matchState.matchedIds.add(bId);
+                    matchState.combo++;
+                    matchState.score += 100 * matchState.combo;
+
+                    document.getElementById('matchScore').innerText = matchState.score;
+                    document.getElementById('matchCombo').innerText = `${matchState.combo}x`;
+
+                    matchState.selected = { base: null, past: null, pp: null };
+                    
+                    setTimeout(() => {
+                        renderMatchingColumns();
+                        clearSvgLines();
+
+                        if (matchState.matchedIds.size === matchState.verbs.length) {
+                            // Victory!
+                            clearInterval(matchState.timerInterval);
+                            playSfx('win');
+                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                            showVictoryModal(matchState.score, document.getElementById('matchTimer').innerText);
+                        }
+                    }, 300);
+
+                } else {
+                    // Mismatch!
+                    playSfx('error');
+                    matchState.combo = 0;
+                    document.getElementById('matchCombo').innerText = '0x';
+
+                    // Shake selected cards
+                    ['base', 'past', 'pp'].forEach(t => {
+                        const card = document.getElementById(`match-card-${t}-${matchState.selected[t].verb.id}`);
+                        if (card) card.classList.add('animate-shake', 'bg-rose-500', 'text-white');
+                    });
+
+                    setTimeout(() => {
+                        matchState.selected = { base: null, past: null, pp: null };
+                        renderMatchingColumns();
+                        clearSvgLines();
+                    }, 600);
+                }
+            }
+        }
+
+        function drawMatchConnections() {
+            clearSvgLines();
+            const svg = document.getElementById('svgOverlay');
+            const svgRect = svg.getBoundingClientRect();
+
+            const sel = matchState.selected;
+            const points = [];
+
+            ['base', 'past', 'pp'].forEach(type => {
+                if (sel[type]) {
+                    const card = document.getElementById(`match-card-${type}-${sel[type].verb.id}`);
+                    if (card) {
+                        const rect = card.getBoundingClientRect();
+                        points.push({
+                            x: rect.left + rect.width / 2 - svgRect.left,
+                            y: rect.top + rect.height / 2 - svgRect.top
+                        });
+                    }
+                }
+            });
+
+            if (points.length >= 2) {
+                for (let i = 0; i < points.length - 1; i++) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', points[i].x);
+                    line.setAttribute('y1', points[i].y);
+                    line.setAttribute('x2', points[i+1].x);
+                    line.setAttribute('y2', points[i+1].y);
+                    line.setAttribute('stroke', '#6366f1');
+                    line.setAttribute('stroke-width', '3');
+                    line.setAttribute('stroke-dasharray', '6,6');
+                    svg.appendChild(line);
+                }
+            }
+        }
+
+        function clearSvgLines() {
+            const svg = document.getElementById('svgOverlay');
+            svg.innerHTML = '';
+        }
+
+        function getMatchHint() {
+            playSfx('click');
+            const remaining = matchState.verbs.filter(v => !matchState.matchedIds.has(v.id));
+            if (remaining.length === 0) return;
+
+            const targetVerb = remaining[0];
+            matchState.selected = {
+                base: { verb: targetVerb, type: 'base' },
+                past: { verb: targetVerb, type: 'past' },
+                pp: { verb: targetVerb, type: 'pp' }
+            };
+
+            renderMatchingColumns();
+            drawMatchConnections();
+        }
+
+        // ================= MODE 2: TRIPLET MEMORY CARDS LOGIC =================
+        let memState = {
+            cards: [],
+            flipped: [],
+            matches: 0,
+            flips: 0,
+            totalPairs: 6,
+            lock: false
+        };
+
+        function initMemoryGame() {
+            const sheetVal = document.getElementById('memorySheetSelect').value;
+            let pool = [];
+            if (sheetVal === 'all') {
+                pool = VERBS;
+            } else {
+                const sNum = parseInt(sheetVal);
+                pool = VERBS.filter(v => v.sheet === sNum);
+            }
+
+            const chosenVerbs = shuffleArray(pool).slice(0, 6);
+            let rawCards = [];
+
+            chosenVerbs.forEach(v => {
+                rawCards.push({ id: v.id, verb: v, type: 'base', text: v.base, ipa: v.baseIpa });
+                rawCards.push({ id: v.id, verb: v, type: 'past', text: v.past, ipa: v.pastIpa });
+                rawCards.push({ id: v.id, verb: v, type: 'pp', text: v.pp, ipa: v.ppIpa });
+            });
+
+            memState.cards = shuffleArray(rawCards);
+            memState.flipped = [];
+            memState.matches = 0;
+            memState.flips = 0;
+            memState.lock = false;
+
+            document.getElementById('memMatches').innerText = `0 / 6`;
+            document.getElementById('memFlips').innerText = `0`;
+
+            renderMemoryGrid();
+        }
+
+        function renderMemoryGrid() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+
+            memState.cards.forEach((card, idx) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'h-28 sm:h-32 perspective-1000 cursor-pointer';
+                
+                const typeTagMap = { 'base': '原形', 'past': '過去式', 'pp': '過去分詞' };
+                const typeColorMap = { 'base': 'bg-indigo-500', 'past': 'bg-amber-500', 'pp': 'bg-pink-500' };
+
+                cardEl.innerHTML = `
+                    <div id="mem-card-inner-${idx}" class="relative w-full h-full duration-300 transform-style-3d shadow-md rounded-2xl border border-slate-200">
+                        <!-- Card Face Down -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl flex items-center justify-center text-white">
+                            <i class="fa-solid fa-question text-2xl opacity-40"></i>
+                        </div>
+                        <!-- Card Face Up -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white rounded-2xl p-2 flex flex-col justify-between items-center text-center">
+                            <span class="text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full ${typeColorMap[card.type]} uppercase">${typeTagMap[card.type]}</span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-slate-800">${card.text}</h4>
+                                <p class="text-[10px] font-mono text-indigo-600">${card.ipa}</p>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-bold truncate max-w-full">${card.verb.meaning}</span>
+                        </div>
+                    </div>
+                `;
+
+                cardEl.onclick = () => handleMemCardClick(idx);
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function handleMemCardClick(idx) {
+            if (memState.lock) return;
+            const card = memState.cards[idx];
+            
+            // Prevent clicking already flipped or matched card
+            if (memState.flipped.includes(idx) || card.matched) return;
+
+            playSfx('flip');
+            speakWord(card.text);
+
+            const inner = document.getElementById(`mem-card-inner-${idx}`);
+            inner.classList.add('rotate-y-180');
+
+            memState.flipped.push(idx);
+
+            if (memState.flipped.length === 3) {
+                memState.flips++;
+                document.getElementById('memFlips').innerText = memState.flips;
+                memState.lock = true;
+
+                const [i1, i2, i3] = memState.flipped;
+                const c1 = memState.cards[i1];
+                const c2 = memState.cards[i2];
+                const c3 = memState.cards[i3];
+
+                // Check if all 3 belong to same verb ID and cover all 3 types
+                const sameId = (c1.id === c2.id && c2.id === c3.id);
+                const types = new Set([c1.type, c2.type, c3.type]);
+
+                if (sameId && types.size === 3) {
+                    // Match success!
+                    playSfx('match');
+                    c1.matched = true;
+                    c2.matched = true;
+                    c3.matched = true;
+
+                    memState.matches++;
+                    document.getElementById('memMatches').innerText = `${memState.matches} / 6`;
+
+                    [i1, i2, i3].forEach(i => {
+                        const el = document.getElementById(`mem-card-inner-${i}`);
+                        el.classList.add('ring-2', 'ring-emerald-400');
+                    });
+
+                    memState.flipped = [];
+                    memState.lock = false;
+
+                    if (memState.matches === 6) {
+                        setTimeout(() => {
+                            playSfx('win');
+                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                            showVictoryModal(1000 - memState.flips * 10, `${memState.flips} 次翻牌`);
+                        }, 400);
+                    }
+                } else {
+                    // Mismatch
+                    playSfx('error');
+                    setTimeout(() => {
+                        [i1, i2, i3].forEach(i => {
+                            const el = document.getElementById(`mem-card-inner-${i}`);
+                            el.classList.remove('rotate-y-180');
+                        });
+                        memState.flipped = [];
+                        memState.lock = false;
+                    }, 1100);
+                }
+            }
+        }
+
+        // ================= MODE 3: FLASHCARDS LOGIC =================
+        let flashState = {
+            verbs: [],
+            currentIndex: 0,
+            isFlipped: false
+        };
+
+        function initFlashcards() {
+            const sheetVal = document.getElementById('flashSheetSelect').value;
+            if (sheetVal === 'all') {
+                flashState.verbs = VERBS;
+            } else {
+                const sNum = parseInt(sheetVal);
+                flashState.verbs = VERBS.filter(v => v.sheet === sNum);
+            }
+
+            flashState.currentIndex = 0;
+            flashState.isFlipped = false;
+            updateFlashCard();
+        }
+
+        function updateFlashCard() {
+            if (flashState.verbs.length === 0) return;
+
+            const cardInner = document.getElementById('flashCardInner');
+            if (flashState.isFlipped) {
+                cardInner.classList.remove('rotate-y-180');
+                flashState.isFlipped = false;
+            }
+
+            const curr = flashState.verbs[flashState.currentIndex];
+
+            document.getElementById('flashIndex').innerText = flashState.currentIndex + 1;
+            document.getElementById('flashTotal').innerText = flashState.verbs.length;
+
+            document.getElementById('flashBase').innerText = curr.base;
+            document.getElementById('flashBaseIpa').innerText = curr.baseIpa;
+            document.getElementById('flashMeaning').innerText = curr.meaning;
+
+            document.getElementById('flashPast').innerText = curr.past;
+            document.getElementById('flashPastIpa').innerText = curr.pastIpa;
+
+            document.getElementById('flashPP').innerText = curr.pp;
+            document.getElementById('flashPPIpa').innerText = curr.ppIpa;
+
+            // Automatically speak base word on display
+            speakWord(curr.base);
+        }
+
+        function flipFlashCard() {
+            playSfx('flip');
+            const cardInner = document.getElementById('flashCardInner');
+            flashState.isFlipped = !flashState.isFlipped;
+            if (flashState.isFlipped) {
+                cardInner.classList.add('rotate-y-180');
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+            }
+        }
+
+        function nextFlashCard() {
+            playSfx('click');
+            flashState.currentIndex = (flashState.currentIndex + 1) % flashState.verbs.length;
+            updateFlashCard();
+        }
+
+        function prevFlashCard() {
+            playSfx('click');
+            flashState.currentIndex = (flashState.currentIndex - 1 + flashState.verbs.length) % flashState.verbs.length;
+            updateFlashCard();
+        }
+
+        function shuffleFlashCards() {
+            playSfx('click');
+            flashState.verbs = shuffleArray(flashState.verbs);
+            flashState.currentIndex = 0;
+            updateFlashCard();
+        }
+
+        function speakFlashCurrent(type) {
+            const curr = flashState.verbs[flashState.currentIndex];
+            if (!curr) return;
+            if (type === 'base') speakWord(curr.base);
+            else if (type === 'past') speakWord(curr.past);
+            else if (type === 'pp') speakWord(curr.pp);
+        }
+
+        // ================= MODE 4: COMPREHENSIVE REFERENCE TABLE LOGIC =================
+        let currentTableSheet = 'all';
+
+        function filterTableSheet(sheet) {
+            playSfx('click');
+            currentTableSheet = sheet;
+            document.querySelectorAll('.tbl-sheet-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-white', 'text-indigo-700', 'shadow-sm');
+                btn.classList.add('text-slate-600');
+            });
+
+            const activeBtn = document.getElementById(`tblSheet-${sheet}`);
+            activeBtn.classList.add('active', 'bg-white', 'text-indigo-700', 'shadow-sm');
+            activeBtn.classList.remove('text-slate-600');
+
+            renderTable();
+        }
+
+        function renderTable() {
+            const search = document.getElementById('tableSearch').value.toLowerCase().trim();
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            let filtered = VERBS;
+            if (currentTableSheet !== 'all') {
+                const sNum = parseInt(currentTableSheet);
+                filtered = filtered.filter(v => v.sheet === sNum);
+            }
+
+            if (search) {
+                filtered = filtered.filter(v => 
+                    v.base.toLowerCase().includes(search) ||
+                    v.past.toLowerCase().includes(search) ||
+                    v.pp.toLowerCase().includes(search) ||
+                    v.meaning.includes(search)
+                );
+            }
+
+            document.getElementById('tableMatchCount').innerText = filtered.length;
+
+            filtered.forEach(v => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-indigo-50/40 transition border-b border-slate-100 text-slate-700';
+
+                row.innerHTML = `
+                    <td class="p-3.5 text-center font-bold text-slate-400 text-xs">${v.id}</td>
+                    
+                    <td class="p-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-900">${v.base}</span>
+                            <span class="text-xs font-mono text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${v.baseIpa}</span>
+                            <button onclick="speakWord('${v.base}')" class="text-slate-400 hover:text-indigo-600 transition ml-auto">
+                                <i class="fa-solid fa-volume-high text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td class="p-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-amber-700">${v.past}</span>
+                            <span class="text-xs font-mono text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">${v.pastIpa}</span>
+                            <button onclick="speakWord('${v.past}')" class="text-slate-400 hover:text-amber-600 transition ml-auto">
+                                <i class="fa-solid fa-volume-high text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td class="p-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-pink-700">${v.pp}</span>
+                            <span class="text-xs font-mono text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">${v.ppIpa}</span>
+                            <button onclick="speakWord('${v.pp}')" class="text-slate-400 hover:text-pink-600 transition ml-auto">
+                                <i class="fa-solid fa-volume-high text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td class="p-3.5 font-bold text-slate-600">${v.meaning}</td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Victory Modal helpers
+        function showVictoryModal(score, timeStr) {
+            document.getElementById('victoryScore').innerText = score;
+            document.getElementById('victoryTime').innerText = timeStr;
+            document.getElementById('victoryModal').classList.remove('hidden');
+        }
+
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.add('hidden');
+            const activeTab = document.querySelector('.nav-tab.active').id.replace('tab-', '');
+            if (activeTab === 'matching') initMatchingGame();
+            if (activeTab === 'memory') initMemoryGame();
+        }
+
+        // Global Bindings
+        window.onload = function() {
+            initVoices();
+
+            document.getElementById('btnTestVoice').onclick = () => {
+                speakWord("dreamed, burned, lit, learned, sped");
+            };
+
+            const sfxBtn = document.getElementById('btnToggleSfx');
+            sfxBtn.onclick = () => {
+                sfxEnabled = !sfxEnabled;
+                const icon = document.getElementById('sfxIcon');
+                if (sfxEnabled) {
+                    icon.className = "fa-solid fa-music text-emerald-300";
+                    sfxBtn.querySelector('span').innerText = "音效開";
+                } else {
+                    icon.className = "fa-solid fa-volume-xmark text-rose-300";
+                    sfxBtn.querySelector('span').innerText = "音效關";
+                }
+            };
+
+            // Window resize line recalculation
+            window.onresize = () => {
+                if (!document.getElementById('view-matching').classList.contains('hidden')) {
+                    drawMatchConnections();
+                }
+            };
+
+            // Start matching game by default
+            initMatchingGame();
+        };
+    </script>
+</body>
+</html>
